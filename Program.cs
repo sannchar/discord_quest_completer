@@ -12,6 +12,9 @@ namespace DiscordQuest
         [STAThread]
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += (s, e) => {
+                File.WriteAllText("crash.log", e.ExceptionObject.ToString());
+            };
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
@@ -104,8 +107,8 @@ namespace DiscordQuest
             cbGame.Location = new Point(16, 36);
             cbGame.Size = new Size(384, 30);
 
-            cbGame.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cbGame.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cbGame.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             
             cbGame.BeginUpdate();
             // Popular games at the top for convenience
@@ -117,22 +120,31 @@ namespace DiscordQuest
             cbGame.Items.Add(new Preset("Dota 2", "dota2.exe", Path.Combine("fake_games", "dota 2 beta", "game", "bin", "win64")));
             cbGame.Items.Add(new Preset("Своя игра (.exe)", "", Path.Combine("fake_games", "Custom")));
             
+            List<Preset> presets = new List<Preset>(10500);
             foreach (string entry in GameDatabase.Data)
             {
-                int pipeIndex = entry.IndexOf('|');
+                int pipeIndex = entry.LastIndexOf('|');
                 if (pipeIndex > 0)
                 {
                     string title = entry.Substring(0, pipeIndex);
                     string exePath = entry.Substring(pipeIndex + 1);
                     
-                    // Exe path might contain subfolders, replace / with \
                     exePath = exePath.Replace('/', '\\');
-                    string exeName = Path.GetFileName(exePath);
-                    string relDir = Path.Combine("fake_games", title.Replace(":", "").Replace("?", ""), Path.GetDirectoryName(exePath));
                     
-                    cbGame.Items.Add(new Preset(title, exeName, relDir));
+                    try 
+                    {
+                        string exeName = Path.GetFileName(exePath);
+                        string safeTitle = string.Join("_", title.Split(Path.GetInvalidFileNameChars()));
+                        string relDir = Path.Combine("fake_games", safeTitle, Path.GetDirectoryName(exePath));
+                        
+                        presets.Add(new Preset(title, exeName, relDir));
+                    }
+                    catch 
+                    {
+                    }
                 }
             }
+            cbGame.Items.AddRange(presets.ToArray());
             cbGame.EndUpdate();
 
             cbGame.SelectedIndex = 0;
