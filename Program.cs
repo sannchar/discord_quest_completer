@@ -100,7 +100,7 @@ namespace DiscordQuest
             panel.Controls.Add(lblGame);
 
             cbGame = new ComboBox();
-            cbGame.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbGame.DropDownStyle = ComboBoxStyle.DropDown;
             cbGame.Font = new Font("Segoe UI", 11);
             cbGame.BackColor = ColorTranslator.FromHtml("#313338");
             cbGame.ForeColor = Color.White;
@@ -239,7 +239,8 @@ namespace DiscordQuest
 
         private void CbGame_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtCustom.Visible = (((Preset)cbGame.SelectedItem).Title == "Своя игра (.exe)");
+            Preset selected = cbGame.SelectedItem as Preset;
+            txtCustom.Visible = (selected != null && selected.Title == "Своя игра (.exe)");
         }
 
         private void BtnAction_Click(object sender, EventArgs e)
@@ -261,7 +262,12 @@ namespace DiscordQuest
             string exeName = "";
             string gameTitle = "";
 
-            Preset selectedPreset = (Preset)cbGame.SelectedItem;
+            Preset selectedPreset = cbGame.SelectedItem as Preset;
+            if (selectedPreset == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите игру из выпадающего списка!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             if (selectedPreset.Title == "Своя игра (.exe)")
             {
