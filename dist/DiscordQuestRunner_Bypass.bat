@@ -263,7 +263,7 @@ namespace DiscordQuest
 
         private void StartQuest()
         {
-            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            string appDir = Environment.CurrentDirectory;
             string relDir = "";
             string exeName = "";
             string gameTitle = "";
@@ -411,7 +411,7 @@ namespace DiscordQuest
                 MessageBox.Show("Сначала остановите запущенную игру!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            string fakeDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fake_games");
+            string fakeDir = Path.Combine(Environment.CurrentDirectory, "fake_games");
             if (Directory.Exists(fakeDir))
             {
                 try
