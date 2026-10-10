@@ -1,10 +1,10 @@
+import urllib.request
 import json
+import os
 
-with open(r'C:\Users\sannc\.gemini\antigravity-cli\brain\a46d7ff4-cf5d-404c-8939-d18881cb784f\.system_generated\steps\26\content.md', encoding='utf-8') as f:
-    text = f.read()
-start = text.find('[')
-end = text.rfind(']') + 1
-data = json.loads(text[start:end])
+req = urllib.request.Request('https://discord.com/api/v9/applications/detectable', headers={'User-Agent': 'Mozilla/5.0'})
+response = urllib.request.urlopen(req)
+data = json.loads(response.read().decode('utf-8'))
 
 seen_titles = set()
 
@@ -32,3 +32,5 @@ with open('GameDatabase.cs', 'w', encoding='utf-8') as out:
         seen_titles.add(title)
         
     out.write('        };\n    }\n}\n')
+
+print(f"Generated GameDatabase.cs with {len(seen_titles)} unique games.")
