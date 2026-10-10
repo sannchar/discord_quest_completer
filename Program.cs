@@ -313,6 +313,7 @@ namespace DiscordQuest
             psi.FileName = targetExe;
             psi.Arguments = string.Format("/k \"title {0} & echo [Discord Quest] {0} запущена... & echo Окно закроется через 16 минут. & timeout /t {1} & exit\"", gameTitle, totalSeconds);
             psi.WindowStyle = ProcessWindowStyle.Normal;
+            psi.UseShellExecute = false;
 
             try
             {
